@@ -1,0 +1,8 @@
+{
+  "name": "OpenNews",
+  "description": "An open source news extension that allows users to follow headlines from the desktop",
+  "uuid": "opennews@damonsalm12.github.io",
+  "shell-version": [
+    "3.34"
+  ]
+}
