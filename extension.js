@@ -59,10 +59,13 @@ var OpenNewsIndicator = class OpenNewsIndicator extends PanelMenu.Button {
             })
             box.add_actor(articleTitle);
             box.add_actor(articleSummary);
-            let item = new PopupMenu.PopupBaseMenuItem({ reactive : true });
+            let item = new PopupMenu.PopupBaseMenuItem({ 
+                reactive : true,
+                style_class: 'opennews-item'
+            });
             item.actor.add_actor(box);
             menuItems.push(item);
-            menuItems.push( new PopupMenu.PopupSeparatorMenuItem() );
+            menuItems.push( new PopupMenu.PopupSeparatorMenuItem())
         }
         return menuItems;
     }
