@@ -18,17 +18,76 @@
 
 /* exported init */
 
-class Extension {
-    constructor() {
+const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
+const GObject = imports.gi.GObject;
+const St = imports.gi.St;
+
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Main = imports.ui.main;
+const PanelMenu = imports.ui.panelMenu;
+const PopupMenu = imports.ui.popupMenu;
+
+var OpenNewsIndicator = class OpenNewsIndicator extends PanelMenu.Button {
+    _init() {
+        super._init(0.0, `${Me.metadata.name} Indicator`, false);
+        let icon = new St.Icon({
+            gicon: new Gio.ThemedIcon({name: 'view-refresh'}),
+            style_class: 'system-status-icon'
+        })
+        this.add_child(icon);
+
+        let submenu = new PopupMenu.PopupMenuItem('PopupMenuItem');
+        this.menu.addMenuItem(submenu);
+        let menuItems = this._buildMenu([{ title: "test", summary : "test summary ttttttttttttttttttttttttt\ntttttttttttttttttttttt"}, { title: "test", summary : "test summary"}]);
+        for(let item of menuItems){
+            this.menu.addMenuItem(item);
+        }
+    }
+    _buildMenu(articles) {
+        let menuItems = [];
+        for(let article of articles) {
+            let box = new St.BoxLayout();
+            let articleTitle = new St.Label({
+                text: article.title,
+                style_class: 'opennews-title'
+            });
+            let articleSummary = new St.Label({
+                text: article.summary,
+                style_class: 'opennews-summary'
+            })
+            box.add_actor(articleTitle);
+            box.add_actor(articleSummary);
+            let item = new PopupMenu.PopupBaseMenuItem({ reactive : true });
+            item.actor.add_actor(box);
+            menuItems.push(item);
+            menuItems.push( new PopupMenu.PopupSeparatorMenuItem() );
+        }
+        return menuItems;
     }
 
-    enable() {
-    }
-
-    disable() {
-    }
 }
+OpenNewsIndicator = GObject.registerClass(
+    {GTypeName: 'OpenNewsIndicator'},
+    OpenNewsIndicator
+);
 
 function init() {
-    return new Extension();
+
+}
+
+var indicator = null;
+
+function enable() {
+
+    indicator = new OpenNewsIndicator();
+    Main.panel.addToStatusArea(`${Me.metadata.name} Indicator`, indicator);
+}
+
+function disable() {
+    if (indicator !== null) {
+        indicator.destroy();
+        indicator = null;
+    }
 }
